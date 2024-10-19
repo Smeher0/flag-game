@@ -73,23 +73,31 @@ export default function Home() {
     const questionTypes = [
       { type: 'continent', text: 'Which continent does this flag belong to?' },
       { type: 'country', text: 'Which country does this flag belong to?' },
-      { type: 'capital', text: 'What is the capital of this country?' },
-      { type: 'currency', text: 'What is the currency of this country?' },
+
+
     ];
-  
+
     // Check if there are valid entries for president_or_head or prime_minister
-    const hasPresidentOrHead = quizData.some(item => item.president_or_head!=null);
-    const hasPrimeMinister = quizData.some(item => item.prime_minister!=null);
+    const hasPresidentOrHead = quizData.some(item => item.president_or_head != null);
+    const hasPrimeMinister = quizData.some(item => item.prime_minister != null);
+    const hasCapital = quizData.some(item => item.capital != null);
+    const hasCurrency = quizData.some(item => item.currency != null);
+    if (hasCapital) {
+      questionTypes.push({ type: 'capital', text: 'What is the capital of this country?' });
+    }
+    if (hasCurrency) {
+      questionTypes.push({ type: 'currency', text: 'What is the currency of this country?' });
+    }
     if (hasPresidentOrHead) {
       questionTypes.push({ type: 'president_or_head', text: 'Who is the President or head of the country?' });
     }
-  
+
     if (hasPrimeMinister) {
       questionTypes.push({ type: 'prime_minister', text: 'Who is the Prime Minister of the country?' });
     }
-  
+
     const questionType = questionTypes[Math.floor(Math.random() * questionTypes.length)];
-  
+
     let allOptions;
     if (questionType.type === 'president_or_head') {
       allOptions = quizData.map(item => item.president_or_head).filter(Boolean);
@@ -98,17 +106,17 @@ export default function Home() {
     } else {
       allOptions = quizData.map(item => item[questionType.type]);
     }
-  
+
     allOptions = [...new Set(allOptions)]; // Remove duplicates
-  
+
     const correctAnswer = data[questionType.type];
     let incorrectOptions = allOptions.filter(option => option !== correctAnswer);
     const shuffledOptions = incorrectOptions.sort(() => 0.5 - Math.random()).slice(0, 3);
     const finalOptions = [...shuffledOptions, correctAnswer].sort(() => 0.5 - Math.random());
-  
+
     setOptions({ question: questionType.text, choices: finalOptions, correctAnswer });
   };
-  
+
 
 
   const checkAnswer = (chosenAnswer) => {
