@@ -99,9 +99,9 @@ export default function Home() {
     const questionType = questionTypes[Math.floor(Math.random() * questionTypes.length)];
 
     let allOptions;
-    if (questionType.type === 'president_or_head') {
+    if (questionType.type == 'president_or_head') {
       allOptions = quizData.map(item => item.president_or_head).filter(Boolean);
-    } else if (questionType.type === 'prime_minister') {
+    } else if (questionType.type == 'prime_minister') {
       allOptions = quizData.map(item => item.prime_minister).filter(Boolean);
     } else {
       allOptions = quizData.map(item => item[questionType.type]);
@@ -136,9 +136,11 @@ export default function Home() {
 
       // Show the correct answer for 3 seconds before moving to the next question
       setShowCorrectAnswer(true);
-      setTimeout(() => {
+      const timeout=setTimeout(() => {
         nextQuestion();
+        clearTimeout(timeout);
       }, 3000);
+      
     }
   };
 
