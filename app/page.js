@@ -71,6 +71,7 @@ export default function Home() {
       { type: 'country', text: 'Which country does this flag belong to?' },
       { type: 'capital', text: 'What is the capital of this country?' },
       { type: 'currency', text: 'What is the currency of this country?' },
+      { type: 'president_or_head', text: 'Who is the President or head of the country?'},
       { type: 'president_or_head', text: 'Who is the President or head of the country?'}
     ];
     const questionType = questionTypes[Math.floor(Math.random() * questionTypes.length)];
