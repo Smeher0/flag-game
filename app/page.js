@@ -30,7 +30,9 @@ export default function Home() {
         country: item.country,
         url: item.url,
         capital: item.capital,
-        currency: item.currency
+        currency: item.currency,
+        president_or_head: item.president_or_head,
+        prime_minister: item.prime_minister
       })));
     }
     fetchQuizData();
@@ -74,35 +76,39 @@ export default function Home() {
       { type: 'capital', text: 'What is the capital of this country?' },
       { type: 'currency', text: 'What is the currency of this country?' },
     ];
-
-    // Filter out items with null values for president_or_head or prime_minister
-    const filteredQuizData = quizData.filter(item => {
-      return (
-        item.president_or_head !== null &&
-        item.prime_minister !== null
-      );
-    });
-    console.log(filteredQuizData)
-    // Add president_or_head and prime_minister question types only if there are valid entries
-    if (filteredQuizData.length > 0) {
-      questionTypes.push(
-        { type: 'president_or_head', text: 'Who is the President or head of the country?' },
-        { type: 'prime_minister', text: 'Who is the Prime Minister of the country?' }
-      );
+  
+    // Check if there are valid entries for president_or_head or prime_minister
+    const hasPresidentOrHead = quizData.some(item => item.president_or_head!=null);
+    const hasPrimeMinister = quizData.some(item => item.prime_minister!=null);
+    if (hasPresidentOrHead) {
+      questionTypes.push({ type: 'president_or_head', text: 'Who is the President or head of the country?' });
     }
-
+  
+    if (hasPrimeMinister) {
+      questionTypes.push({ type: 'prime_minister', text: 'Who is the Prime Minister of the country?' });
+    }
+  
     const questionType = questionTypes[Math.floor(Math.random() * questionTypes.length)];
-
-    let allOptions = filteredQuizData.map(item => item[questionType.type]);
+  
+    let allOptions;
+    if (questionType.type === 'president_or_head') {
+      allOptions = quizData.map(item => item.president_or_head).filter(Boolean);
+    } else if (questionType.type === 'prime_minister') {
+      allOptions = quizData.map(item => item.prime_minister).filter(Boolean);
+    } else {
+      allOptions = quizData.map(item => item[questionType.type]);
+    }
+  
     allOptions = [...new Set(allOptions)]; // Remove duplicates
-
+  
     const correctAnswer = data[questionType.type];
     let incorrectOptions = allOptions.filter(option => option !== correctAnswer);
     const shuffledOptions = incorrectOptions.sort(() => 0.5 - Math.random()).slice(0, 3);
     const finalOptions = [...shuffledOptions, correctAnswer].sort(() => 0.5 - Math.random());
-
+  
     setOptions({ question: questionType.text, choices: finalOptions, correctAnswer });
   };
+  
 
 
   const checkAnswer = (chosenAnswer) => {
