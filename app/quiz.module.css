@@ -93,3 +93,17 @@
     font-size: 18px;
   }
   
+  .correct {
+    background-color: green; /* Green for the correct answer */
+    color: white; /* Optional: White text for better readability */
+  }
+  
+  .incorrect {
+    background-color: red; /* Red for the selected incorrect answer */
+    color: white; /* Optional: White text for better readability */
+  }
+  .incorrect:hover {
+    background-color: red;
+    color: white;
+  }
+  

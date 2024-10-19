@@ -17,6 +17,8 @@ export default function Home() {
   const [questionData, setQuestionData] = useState(null);
   const [options, setOptions] = useState([]);
   const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
+  const [selectedAnswer, setSelectedAnswer] = useState('');
+
 
   // Fetch the quiz data from the API
   useEffect(() => {
@@ -71,12 +73,27 @@ export default function Home() {
       { type: 'country', text: 'Which country does this flag belong to?' },
       { type: 'capital', text: 'What is the capital of this country?' },
       { type: 'currency', text: 'What is the currency of this country?' },
-      { type: 'president_or_head', text: 'Who is the President or head of the country?'},
-      { type: 'president_or_head', text: 'Who is the President or head of the country?'}
     ];
+
+    // Filter out items with null values for president_or_head or prime_minister
+    const filteredQuizData = quizData.filter(item => {
+      return (
+        item.president_or_head !== null &&
+        item.prime_minister !== null
+      );
+    });
+    console.log(filteredQuizData)
+    // Add president_or_head and prime_minister question types only if there are valid entries
+    if (filteredQuizData.length > 0) {
+      questionTypes.push(
+        { type: 'president_or_head', text: 'Who is the President or head of the country?' },
+        { type: 'prime_minister', text: 'Who is the Prime Minister of the country?' }
+      );
+    }
+
     const questionType = questionTypes[Math.floor(Math.random() * questionTypes.length)];
 
-    let allOptions = quizData.map(item => item[questionType.type]);
+    let allOptions = filteredQuizData.map(item => item[questionType.type]);
     allOptions = [...new Set(allOptions)]; // Remove duplicates
 
     const correctAnswer = data[questionType.type];
@@ -87,10 +104,13 @@ export default function Home() {
     setOptions({ question: questionType.text, choices: finalOptions, correctAnswer });
   };
 
-  const checkAnswer = (selectedAnswer) => {
+
+  const checkAnswer = (chosenAnswer) => {
     if (!questionData) return;
 
-    let isCorrect = selectedAnswer === options.correctAnswer;
+    setSelectedAnswer(chosenAnswer); // Store the selected answer
+
+    let isCorrect = chosenAnswer === options.correctAnswer;
 
     if (isCorrect) {
       setCorrectAnswers(correctAnswers + 1);
@@ -107,6 +127,7 @@ export default function Home() {
       }, 3000);
     }
   };
+
 
   const restartQuiz = () => {
     setCurrentQuestion(0);
@@ -162,17 +183,22 @@ export default function Home() {
                 {options.choices.map((choice, index) => (
                   <button
                     key={index}
-                    onClick={() => checkAnswer(choice)}
+                    onClick={() => {
+                      checkAnswer(choice);
+                      setSelectedAnswer(choice); // Store selected answer
+                    }}
                     className={`
-                      ${styles.optionButton}
-                      ${showCorrectAnswer && choice === options.correctAnswer ? styles.correct : ''}
-                    `}
+        ${styles.optionButton}
+        ${showCorrectAnswer && choice === options.correctAnswer ? styles.correct : ''}
+        ${showCorrectAnswer && selectedAnswer === choice && selectedAnswer !== options.correctAnswer ? styles.incorrect : ''}
+      `}
                     disabled={showCorrectAnswer} // Disable buttons while showing correct answer
                   >
                     {choice}
                   </button>
                 ))}
               </div>
+
               <div id="timer" className={styles.timer}>
                 Time left: {timer}s
               </div>
